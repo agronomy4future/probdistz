@@ -8,7 +8,7 @@
 
 The goal of probdistz package is to calculate the probability density function (PDF), cumulative density function (CDF), and Z-scores for specified yield columns in a dataset, optionally generating smoothed data.
 
-□ Code summary: 
+□ Code summary: https://github.com/agronomy4future/r_code/blob/main/Probability_Distribution_and_Z_Score_Calculation_Function_feat_probdistz.ipynb
 
 □ Code explained: https://agronomy4future.org/archives/23060
 

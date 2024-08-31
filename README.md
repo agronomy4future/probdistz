@@ -61,7 +61,7 @@ head(df,5)
 .
 .
 # to calculate PDF, CDF and Z-score per genotype across all environments
-dataA= probdistz(df, env_cols= c("genotype"), yield_cols= c("grain_weight"), smooth= TRUE)
+dataA= probdistz(df, env_cols= c("genotype"), yield_cols= "grain_weight", smooth= TRUE)
 
 set.seed(100)
 dataA[sample(nrow(dataA),5),]
@@ -73,7 +73,7 @@ dataA[sample(nrow(dataA),5),]
 985      79.18965 2.876187e-09 1.00000000  5.81981982   up_state
 
 # to calculate PDF, CDF and Z-score per genotype, categorized by field
-dataB= probdistz(df, env_cols= c("field","genotype"), yield_cols= c("grain_weight"), smooth= TRUE)
+dataB= probdistz(df, env_cols= c("field","genotype"), yield_cols= "grain_weight", smooth= TRUE)
 
 set.seed(100)
 dataB[sample(nrow(dataB),5),]

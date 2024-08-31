@@ -87,5 +87,33 @@ dataB[sample(nrow(dataB),5),]
 .
 .
 
+# How is the probdistz() package efficient in creating PDF and CDF curves?
 
+![image](https://github.com/user-attachments/assets/89fce0fc-126c-432c-a8c6-20a8f5689f76)
+
+To create the PDF curve,
+
+□ When using stat_function()
+
+ggplot(data=subset(df, field=="up_state"), aes(x=grain_weight)) +
+  
+  stat_function(data=subset(subset(df, field=="up_state"), genotype=="cv_1"), 
+                aes(color="cv_1"), linewidth=1, fun=dnorm, 
+                args=list(mean=mean(subset(subset(df, field=="up_state"), genotype=="cv_1")$grain_weight, na.rm=TRUE),
+                          sd=sd(subset(subset(df, field=="up_state"), genotype=="cv_1")$grain_weight, na.rm=TRUE))) +
+  
+  stat_function(data=subset(subset(df, field=="up_state"), genotype=="cv_2"), 
+                aes(color="cv_2"), linewidth=1, fun=dnorm, 
+                args=list(mean=mean(subset(subset(df, field=="up_state"), genotype=="cv_2")$grain_weight, na.rm=TRUE),
+                          sd=sd(subset(subset(df, field=="up_state"), genotype=="cv_2")$grain_weight, na.rm=TRUE))) +
+  
+  stat_function(data=subset(subset(df, field=="up_state"), genotype=="cv_3"), 
+                aes(color="cv_3"), linewidth=1, fun=dnorm, 
+                args=list(mean=mean(subset(subset(df, field=="up_state"), genotype=="cv_3")$grain_weight, na.rm=TRUE),
+                          sd=sd(subset(subset(df, field=="up_state"), genotype=="cv_3")$grain_weight, na.rm=TRUE))) +
+
+
+□ When using probdistz()
+ggplot(data=subset(dataA, field=="up_state"), aes(x=grain_weight, y=smooth_pdf, color=genotype)) +
+  geom_line ()+
 ```

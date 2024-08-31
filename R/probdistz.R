@@ -1,32 +1,38 @@
-#' Probability Distribution and Z-Score Calculation Function
+#' Calculate Probability Distributions (PDF, CDF, and Z-Scores) with Optional Smoothing
 #'
-#' @description
-#' The `probdistz` function calculates the probability density function (PDF), cumulative density function (CDF), and Z-scores for specified yield columns in a dataset, optionally generating smoothed data.
+#' This function calculates the Probability Density Function (PDF), Cumulative Distribution Function (CDF), and Z-scores for the given yield columns within specified environmental factor groups. Optionally, smoothed curves can be generated based on normal distribution assumptions.
 #'
 #' @param data A data frame containing the dataset to be analyzed.
-#' @param env_cols A character vector of column names representing environmental variables in the dataset. These columns will be treated as factors.
-#' @param yield_cols A character vector of column names representing yield variables in the dataset. These columns will be treated as numeric.
-#' @param smooth A logical value indicating whether to generate smoothed PDF, CDF, and Z-scores. If `TRUE`, the function will generate smoothed values over a range of the yield data. Defaults to `TRUE`.
+#' @param env_cols A character vector specifying the names of the environmental factor columns in the data frame.
+#' @param yield_cols A character vector specifying the names of the yield columns for which the PDF, CDF, and Z-scores will be calculated.
+#' @param smooth A logical value indicating whether to generate smoothed PDF, CDF, and Z-scores based on normal distribution assumptions. Default is \code{TRUE}.
 #'
-#' @details
-#' This function processes the input dataset by first ensuring that the specified environmental and yield columns exist and are in the correct format. It then generates all unique combinations of the environmental variables and calculates the PDF, CDF, and Z-scores for each combination and yield column. If `smooth` is `TRUE`, the function generates smoothed data over a specified range of the yield values.
-#'
-#' The function returns a data frame containing the calculated values, including the original environmental variables and yield values, as well as the calculated PDF, CDF, and Z-scores for each combination of environmental variables.
-#'
-#' @return A data frame containing the calculated PDF, CDF, and Z-scores, with optional smoothed values. The data frame includes the original environmental variables and yield values, along with the new calculated columns.
+#' @return A data frame containing the original data along with additional columns for the calculated PDF, CDF, and Z-scores. If \code{smooth = TRUE}, additional columns with smoothed values are included.
 #'
 #' @examples
-#' # Example usage:
-#' # Assuming `data` is your dataset, `env_cols` are your environmental columns,
-#' # and `yield_cols` are your yield columns:
-#' result= probdistz(data = your_data, env_cols = c("env1", "env2"), yield_cols = c("yield1", "yield2"))
+#' # Sample data
+#' df= data.frame(
+#'                field = c("A", "A", "B", "B"),
+#'                genotype = c("X", "Y", "X", "Y"),
+#'                grain_weight = c(45, 50, 55, 60)
+#' )
+#'
+#' # Calculate probability distributions with smoothing
+#'    output= probdistz(df, env_cols= c("field", "genotype"), yield_cols= c("grain_weight"), smooth=TRUE or FALSE)
+#'
+#'    * smooth= False → to calculate PDF, CDF, and Z-Scores with actual data set
+#'    ** smooth= False → to calculate PDF, CDF, and Z-Scores with extended data set until 6σ
+#'
+#' # View result
+#' head(result)
 #'
 #' @export
+#'
 
-probdistz= function(data, env_cols, yield_cols, smooth = TRUE) {
+probdistz= function(data, env_cols, yield_cols, smooth= TRUE) {
   # Ensure the necessary packages are installed and loaded
-  if (!requireNamespace("dplyr", quietly = TRUE)) install.packages("dplyr", dependencies = TRUE)
-  if (!requireNamespace("stats", quietly = TRUE)) install.packages("stats", dependencies = TRUE)
+  if (!requireNamespace("dplyr", quietly= TRUE)) install.packages("dplyr", dependencies= TRUE)
+  if (!requireNamespace("stats", quietly= TRUE)) install.packages("stats", dependencies= TRUE)
   library(dplyr)
   library(stats)
 
@@ -54,24 +60,21 @@ probdistz= function(data, env_cols, yield_cols, smooth = TRUE) {
       # Filter data for the current combination of environmental variables
       filtered_data= data
       for (col in env_cols) {
-        filtered_data= filtered_data %>% filter(!!sym(col) == env_comb[[col]])
+        filtered_data= filtered_data %>% filter(.data[[col]]== env_comb[[1, col]])
       }
 
       # Calculate PDF, CDF, and Z-score for the actual data
       filtered_data= filtered_data %>%
         mutate(
-          !!paste0("pdf_", yield_col) := dnorm(!!sym(yield_col), mean = mean(!!sym(yield_col),
-                                                                             na.rm = TRUE), sd = sd(!!sym(yield_col), na.rm = TRUE)),
-          !!paste0("cdf_", yield_col) := pnorm(!!sym(yield_col), mean = mean(!!sym(yield_col),
-                                                                             na.rm = TRUE), sd = sd(!!sym(yield_col), na.rm = TRUE)),
-          !!paste0("z_", yield_col) := (!!sym(yield_col) - mean(!!sym(yield_col), na.rm = TRUE)) / sd(!!sym(yield_col),
-                                                                                                      na.rm = TRUE)
+          !!paste0("pdf_", yield_col) := dnorm(.data[[yield_col]], mean= mean(.data[[yield_col]], na.rm= TRUE), sd= sd(.data[[yield_col]], na.rm= TRUE)),
+          !!paste0("cdf_", yield_col) := pnorm(.data[[yield_col]], mean= mean(.data[[yield_col]], na.rm= TRUE), sd= sd(.data[[yield_col]], na.rm= TRUE)),
+          !!paste0("z_", yield_col) := (.data[[yield_col]] - mean(.data[[yield_col]], na.rm= TRUE)) / sd(.data[[yield_col]], na.rm= TRUE)
         )
 
       if (smooth) {
         summary_stats= filtered_data %>%
-          summarize(mean = mean(!!sym(yield_col), na.rm = TRUE),
-                    sd = sd(!!sym(yield_col), na.rm = TRUE))
+          summarize(mean = mean(.data[[yield_col]], na.rm= TRUE),
+                    sd = sd(.data[[yield_col]], na.rm= TRUE))
 
         smooth_data= summary_stats %>%
           rowwise() %>%
@@ -79,19 +82,19 @@ probdistz= function(data, env_cols, yield_cols, smooth = TRUE) {
             mean_val= .$mean
             sd_val= .$sd
 
-            if (is.na(sd_val) || sd_val == 0) {
+            if (is.na(sd_val) || sd_val== 0) {
               return(data.frame())
             }
 
             min_value= mean_val - 6 * sd_val
             max_value= mean_val + 6 * sd_val
-            x_values= seq(min_value, max_value, length.out = 1000)
+            x_values= seq(min_value, max_value, length.out= 1000)
 
             # Create the smooth_data dataframe
             smooth_data= data.frame(
               yield_col_value= x_values,
-              smooth_pdf= dnorm(x_values, mean = mean_val, sd = sd_val),
-              smooth_cdf= pnorm(x_values, mean = mean_val, sd = sd_val),
+              smooth_pdf= dnorm(x_values, mean= mean_val, sd= sd_val),
+              smooth_cdf= pnorm(x_values, mean= mean_val, sd= sd_val),
               smooth_z= (x_values - mean_val) / sd_val
             )
 
@@ -100,7 +103,7 @@ probdistz= function(data, env_cols, yield_cols, smooth = TRUE) {
 
             # Add environmental columns back to smooth_data
             for (col in env_cols) {
-              smooth_data[[col]]= rep(env_comb[[1, col]], each = length(x_values))
+              smooth_data[[col]]= rep(env_comb[[1, col]], each= length(x_values))
             }
 
             smooth_data

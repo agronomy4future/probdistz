@@ -111,7 +111,6 @@ ggplot(data=subset(df, field=="up_state"), aes(x=grain_weight)) +
                 args=list(mean=mean(subset(subset(df, field=="up_state"), genotype=="cv_3")$grain_weight, na.rm=TRUE),
                           sd=sd(subset(subset(df, field=="up_state"), genotype=="cv_3")$grain_weight, na.rm=TRUE))) +
 ```
-
 □ When using probdistz()
 
 ``` r

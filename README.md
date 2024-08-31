@@ -37,7 +37,7 @@ probdistz(data, env_cols, yield_cols, smooth= TRUE)
 
 ■ smooth= TRUE: the probdistz() package predicts additional data to compensate for missing values based on 6σ,
 and uses this to calculate the PDF, CDF, and Z-score, resulting in a continuous probability curve.
-■ smooth= FALSE, the probdistz() package calculates the PDF, CDF, and Z-score based on the actual dataset.
+■ smooth= FALSE: the probdistz() package calculates the PDF, CDF, and Z-score based on the actual dataset.
 Therefore, if the datapoints are limited, the probability curve may not be connected.
 ```
 
@@ -61,7 +61,7 @@ head(df,5)
 .
 .
 # to calculate PDF, CDF and Z-score per genotype across all environments
-dataA= probdistz(df, env_cols= c("field"), yield_cols= c("grain_weight"), smooth= TRUE)
+dataA= probdistz(df, env_cols= c("genotype"), yield_cols= c("grain_weight"), smooth= TRUE)
 
 set.seed(100)
 dataA[sample(nrow(dataA),5),]

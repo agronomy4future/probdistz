@@ -89,8 +89,6 @@ dataB[sample(nrow(dataB),5),]
 
 # How is the probdistz() package efficient in creating PDF and CDF curves?
 
-![Logo] https://i0.wp.com/agronomy4future.org/wp-content/uploads/2024/08/prodistz1.jpg?w=520&ssl=1
-
 To create the PDF curve,
 
 □ When using stat_function()

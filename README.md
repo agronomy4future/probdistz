@@ -35,8 +35,10 @@ This is a basic code to calculate environmental index:
 probdistz(data, env_cols, yield_cols, smooth= TRUE)
 *smooth= TRUE or FALSE, Default is TRUE
 
-When smooth = TRUE is selected, the probdistz() package predicts additional data to compensate for missing values based on 6σ, and uses this to calculate the PDF, CDF, and Z-score, resulting in a continuous probability curve.
-When selecting smooth= FALSE, the probdistz() package calculates the PDF, CDF, and Z-score based on the actual dataset. Therefore, if the datapoints are limited, the probability curve may not be connected.
+When smooth = TRUE is selected, the probdistz() package predicts additional data to compensate for missing values based on 6σ,
+and uses this to calculate the PDF, CDF, and Z-score, resulting in a continuous probability curve.
+When selecting smooth= FALSE, the probdistz() package calculates the PDF, CDF, and Z-score based on the actual dataset.
+Therefore, if the datapoints are limited, the probability curve may not be connected.
 ```
 
 ## Let’s practice with actual dataset

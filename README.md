@@ -86,13 +86,14 @@ dataB[sample(nrow(dataB),5),]
 .
 .
 .
-
-# How is the probdistz() package efficient in creating PDF and CDF curves?
+```
+## How is the probdistz() package efficient in creating PDF and CDF curves?
 
 To create the PDF curve,
 
 □ When using stat_function()
 
+``` r
 ggplot(data=subset(df, field=="up_state"), aes(x=grain_weight)) +
   
   stat_function(data=subset(subset(df, field=="up_state"), genotype=="cv_1"), 
@@ -109,9 +110,11 @@ ggplot(data=subset(df, field=="up_state"), aes(x=grain_weight)) +
                 aes(color="cv_3"), linewidth=1, fun=dnorm, 
                 args=list(mean=mean(subset(subset(df, field=="up_state"), genotype=="cv_3")$grain_weight, na.rm=TRUE),
                           sd=sd(subset(subset(df, field=="up_state"), genotype=="cv_3")$grain_weight, na.rm=TRUE))) +
-
+```
 
 □ When using probdistz()
+
+``` r
 ggplot(data=subset(dataA, field=="up_state"), aes(x=grain_weight, y=smooth_pdf, color=genotype)) +
   geom_line ()+
 ```

@@ -14,7 +14,7 @@ The goal of probdistz package is to calculate the probability density function (
 
 ## Installation
 
-You can install the development version of fwrmodel like so:
+You can install the development version of probdistz like so:
 
 Before installing, please download Rtools (https://cran.r-project.org/bin/windows/Rtools)
 
